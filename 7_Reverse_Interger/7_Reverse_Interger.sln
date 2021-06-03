@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31129.286
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "7_Reverse_Interger", "7_Reverse_Interger.vcxproj", "{78161E62-BB1D-47FE-97E9-A88A81FD0146}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{78161E62-BB1D-47FE-97E9-A88A81FD0146}.Debug|x64.ActiveCfg = Debug|x64
+		{78161E62-BB1D-47FE-97E9-A88A81FD0146}.Debug|x64.Build.0 = Debug|x64
+		{78161E62-BB1D-47FE-97E9-A88A81FD0146}.Debug|x86.ActiveCfg = Debug|Win32
+		{78161E62-BB1D-47FE-97E9-A88A81FD0146}.Debug|x86.Build.0 = Debug|Win32
+		{78161E62-BB1D-47FE-97E9-A88A81FD0146}.Release|x64.ActiveCfg = Release|x64
+		{78161E62-BB1D-47FE-97E9-A88A81FD0146}.Release|x64.Build.0 = Release|x64
+		{78161E62-BB1D-47FE-97E9-A88A81FD0146}.Release|x86.ActiveCfg = Release|Win32
+		{78161E62-BB1D-47FE-97E9-A88A81FD0146}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E7AEEAAF-A20E-4293-A816-0181D249DD67}
+	EndGlobalSection
+EndGlobal
