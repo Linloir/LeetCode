@@ -34,7 +34,7 @@ int main(){
         else if(command == 2){
             int value;
             scanf("%d", &value);
-            tree_delete(sample_tree, value);
+            sample_tree = tree_delete(sample_tree, value);
             tree_print(sample_tree, 0, 0);
             printf("\n");
         }
