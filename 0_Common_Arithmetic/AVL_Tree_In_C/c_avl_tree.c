@@ -104,8 +104,8 @@ PtrToNode tree_delete(Tree tree, int value){
         else{
             PtrToNode sm_max = tree_find_smaller_max(tree);
             int sm_value = sm_max->value;
-            tree = tree_delete(tree, sm_value);
             tree->value = sm_value;
+            tree->l_child = tree_delete(tree->l_child, sm_value);
             if(tree_height(tree->r_child) - tree_height(tree->l_child) == 2){
                 if (tree_height(tree->r_child->r_child) >= tree_height(tree->r_child->l_child)){
                     tree = tree_L_rotate(tree, tree->r_child);
