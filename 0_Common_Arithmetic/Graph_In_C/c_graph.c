@@ -289,7 +289,7 @@ void graph_BFS_traverse(Graph g, _STATUS_ (*visit)(Graph g, int vexID)){
             //Put parent vex in await visiting queue
             queue_enqueue(await_vex, i);
             //Start visiting child
-            while(queue_is_empty(await_vex)){
+            while(!queue_is_empty(await_vex)){
                 int vex = queue_dequeue(await_vex);
                 for (int j = graph_vex_first_adj(g, vex); j >= 0; j = graph_vex_next_adj(g, vex, j)){
                     if(!visited[j]){
@@ -301,6 +301,7 @@ void graph_BFS_traverse(Graph g, _STATUS_ (*visit)(Graph g, int vexID)){
             }
         }
     }
+    free(await_vex);
 }
 
 void DFS(Graph g, int vexID){

@@ -39,8 +39,8 @@ ArcNode *graph_find_previous_arc(Graph g, int s_vexID, int e_vexID);
 int graph_arc_weight(Graph g, int s_vexID, int e_vexID);
 void graph_insert_arc(Graph g, int s_vexID, int e_vexID, int weight);
 void graph_delete_arc(Graph g, int s_vexID, int e_vexID);
-void graph_DFS_traverse(Graph g, _STATUS_ (*visit)(Graph g, int vexID));
-void graph_BFS_traverse(Graph g, _STATUS_ (*visit)(Graph g, int vexID));
+void graph_DFS_traverse(Graph g, int s_vexID, _STATUS_ (*visit)(Graph g, int vexID));
+void graph_BFS_traverse(Graph g, int s_vexID, _STATUS_ (*visit)(Graph g, int vexID));
 void DFS(Graph g, int vexID);
 int graph_visit(Graph g, int vexID);
 
