@@ -1,49 +1,49 @@
+#include "c_graph.h"
 #include <stdio.h>
-#define MAX_MAP 999
-#define MAX 65535
 
-int Dijkstra(int, int, int, int*, int **);
+/*
+算法核心：
+迪杰斯特拉算法采用BFS广度优先搜索，在不使用堆优化时间复杂度的情况下，可以使用标准的BFS算法进行遍历
+visit函数功能为更新节点距离
+*/
 
-int main(){
-    //read a map
-    int vertex_1 = 0, vertex_2 = 0;
-    int **map = (int **)malloc(sizeof(int *) * MAX_MAP);
-    for (int i = 0; i < MAX_MAP; i++){
-        map[i] = (int *)malloc(sizeof(int) * MAX_MAP);
-        for (int j = 0; j < MAX_MAP; j++){
-            map[i][j] = MAX;
+int distance[GRAPH_MAX];
+int path[GRAPH_MAX];
+
+int dij_visit(Graph g, int vexID){
+    for (int i = graph_vex_first_adj(g, vexID); i >= 0; i = graph_vex_next_adj(g, vexID, i)){
+        int w = graph_arc_weight(g, vexID, i);
+        if(distance[vexID] + w < distance[i]){
+            distance[i] = distance[vexID] + w;
+            path[i] = vexID;
         }
     }
-    do{
-        scanf("%d %d", &vertex_1, &vertex_2);
-        if(vertex_1 >= 0 && vertex_2 >= 0){
-            scanf("%d", &map[vertex_1][vertex_2]);
-        }
-    } while (vertex_1 != -1 || vertex_2 != -1);
-
-    //read two points
-    int start, end;
-    scanf("%d %d", &start, &end);
-
-    //dijkstra
-    int min_lenth = Dijkstra(start, end, 0, NULL, map);
 }
 
-int Dijkstra(int start, int end, int n, int* dij, int** map){
-    if(dij == NULL){
-        dij = (int *)malloc(sizeof(int) * n);
-        dij[0] = start;
+void dij_print(int vexID){
+    if(path[vexID] >= 0){
+        dij_print(path[vexID]);
     }
+    printf("%d->", vexID);
+}
 
-    int min = MAX;
-    for (int i = 0; i <= n; i++){
-        for (int j = 0; j < MAX_MAP; j++){
-            if(map[dij[i]][j] < min){
-                min = map[dij[i][j]];
-                dij[n + 1] = j;
-            }
-        }
+void Dijkstra(Graph g, int s_vexID, int e_vexID){
+    for (int i = 0; i < GRAPH_MAX; i++){
+        distance[i] = 65535;
+        path[i] = -1;
     }
+    distance[s_vexID] = 0;
+    graph_BFS_traverse(g, s_vexID, dij_visit);
+    printf("Path:\n", e_vexID);
+    dij_print(path[e_vexID]);
+    printf("%d\nTotal length: %d\n", e_vexID, distance[e_vexID]);
+}
 
-    
+int main(){
+    Graph sample_graph = graph_init(1);
+    graph_create(sample_graph);
+    int s, e;
+    printf("Insert two vertices:\n");
+    scanf("%d %d", &s, &e);
+    Dijkstra(sample_graph, s, e);
 }
