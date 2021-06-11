@@ -6,7 +6,7 @@ In this impletation, crossed-linked-list ADT is used to conserve the graph
 */
 
 #define NOT_ASSIGNED -65535
-#define MAX 256
+#define GRAPH_MAX 256
 
 typedef struct VexNode VexNode;
 typedef struct ArcNode ArcNode;
@@ -14,7 +14,7 @@ typedef struct Graph _Graph;
 typedef _Graph *Graph;
 typedef int _STATUS_;
 
-int visited[MAX];
+int visited[GRAPH_MAX];
 _STATUS_ (*graph_visit_func)(Graph g, int vexID);
 /*
 A sample of visit function is given in this impletation
@@ -39,7 +39,7 @@ ArcNode *graph_find_previous_arc(Graph g, int s_vexID, int e_vexID);
 int graph_arc_weight(Graph g, int s_vexID, int e_vexID);
 void graph_insert_arc(Graph g, int s_vexID, int e_vexID, int weight);
 void graph_delete_arc(Graph g, int s_vexID, int e_vexID);
-void graph_DFS_traverse(Graph g, int s_vexID, _STATUS_ (*visit)(Graph g, int vexID));
+void graph_DFS_traverse(Graph g, int s_vex_ID, _STATUS_ (*visit)(Graph g, int vexID));
 void graph_BFS_traverse(Graph g, int s_vexID, _STATUS_ (*visit)(Graph g, int vexID));
 void DFS(Graph g, int vexID);
 int graph_visit(Graph g, int vexID);

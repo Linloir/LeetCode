@@ -29,8 +29,8 @@ Graph graph_init(int kind){
     Graph new_graph = (Graph)malloc(sizeof(struct Graph));
     new_graph->vex_num = 0;
     new_graph->arc_num = 0;
-    new_graph->vex_list = (VexNode *)malloc(sizeof(VexNode) * MAX);
-    for (int i = 0; i < MAX; i++){
+    new_graph->vex_list = (VexNode *)malloc(sizeof(VexNode) * GRAPH_MAX);
+    for (int i = 0; i < GRAPH_MAX; i++){
         new_graph->vex_list[i].info = NOT_ASSIGNED;
         new_graph->vex_list[i].first_arc = NULL;
     }
@@ -83,7 +83,7 @@ void graph_create(Graph g){
 
 int graph_find_vex(Graph g, int info){
     int iterator = 0;
-    while(iterator <= MAX){
+    while(iterator <= GRAPH_MAX){
         if(g->vex_list[iterator].info == info)
             return iterator;
         else
@@ -93,7 +93,7 @@ int graph_find_vex(Graph g, int info){
 }
 
 int graph_vex_info(Graph g, int vexID){
-    if(vexID < 0 || vexID > MAX){
+    if(vexID < 0 || vexID > GRAPH_MAX){
         printf("Request overflow.\n");
         return NOT_ASSIGNED;
     }
@@ -138,7 +138,7 @@ int graph_vex_next_adj(Graph g, int vexID, int p_vexID){
 }
 
 void graph_insert_vex(Graph g, int info){
-    if(g->vex_num == MAX){
+    if(g->vex_num == GRAPH_MAX){
         printf("Graph full.\n");
         return;
     }
@@ -153,37 +153,66 @@ void graph_insert_vex(Graph g, int info){
 }
 
 void graph_delete_vex(Graph g, int vexID){
-    if(vexID < 0 || vexID >= g->vex_num){
-        printf("Vex not found.\n");
+    //老算法通过懒惰删除法删除节点
+    // if(vexID < 0 || vexID >= g->vex_num){
+    //     printf("Vex not found.\n");
+    //     return;
+    // }
+    // //Delete indegree arcs of this vertex
+    // for (int i = 0, c = 0; c < g->vex_num; i++){
+    //     if(i == vexID){
+    //         c++;
+    //         continue;
+    //     }
+    //     if(g->vex_list[i].info != NOT_ASSIGNED){
+    //         ArcNode *iterator = g->vex_list[i].first_arc;
+    //         while(iterator != NULL){
+    //             if(iterator->next_vexID == vexID)
+    //                 graph_delete_arc(g, i, iterator->next_vexID);
+    //             iterator = iterator->next_arc;
+    //         }
+    //     }
+    //     else
+    //         continue;
+    // }
+
+    // //Delete the vertex
+    // ArcNode *iterator = g->vex_list[vexID].first_arc;
+    // while(iterator != NULL){
+    //     ArcNode *temp = iterator->next_arc;
+    //     free(iterator);
+    //     iterator = temp;
+    // }
+    // g->vex_list[vexID].info = NOT_ASSIGNED;
+    // g->vex_list[vexID].first_arc = NULL;
+    if(vexID == g->vex_num - 1){
+        for (int i = 0; i < vexID; i++)
+            graph_delete_arc(g, i, vexID);
+        g->vex_list[vexID].first_arc = NULL;
+        g->vex_list[vexID].info = NOT_ASSIGNED;
         return;
     }
-    //Delete indegree arcs of this vertex
-    for (int i = 0, c = 0; c < g->vex_num; i++){
-        if(i == vexID){
-            c++;
-            continue;
-        }
-        if(g->vex_list[i].info != NOT_ASSIGNED){
+    else{
+        for (int i = 0; i < g->vex_num; i++){
+            if(i == vexID)
+                continue;
             ArcNode *iterator = g->vex_list[i].first_arc;
             while(iterator != NULL){
+                if(iterator->next_vexID > vexID)
+                    iterator->next_vexID--;
                 if(iterator->next_vexID == vexID)
-                    graph_delete_arc(g, i, iterator->next_vexID);
+                    graph_delete_arc(g, i, vexID);
                 iterator = iterator->next_arc;
             }
         }
-        else
-            continue;
+        for (int i = vexID; i < g->vex_num - 1; i++){
+            g->vex_list[i].first_arc = g->vex_list[i + 1].first_arc;
+            g->vex_list[i].info = g->vex_list[i + 1].info;
+        }
+        g->vex_list[g->vex_num - 1].info = NOT_ASSIGNED;
+        g->vex_list[g->vex_num - 1].first_arc = NULL;
+        g->vex_num--;
     }
-
-    //Delete the vertex
-    ArcNode *iterator = g->vex_list[vexID].first_arc;
-    while(iterator != NULL){
-        ArcNode *temp = iterator->next_arc;
-        free(iterator);
-        iterator = temp;
-    }
-    g->vex_list[vexID].info = NOT_ASSIGNED;
-    g->vex_list[vexID].first_arc = NULL;
 }
 
 ArcNode *graph_find_arc(Graph g, int s_vexID, int e_vexID){
@@ -216,6 +245,7 @@ ArcNode *graph_find_previous_arc(Graph g, int s_vexID, int e_vexID){
         else
             iterator = iterator->next_arc;
     }
+    return NULL;
 }
 
 int graph_arc_weight(Graph g, int s_vexID, int e_vexID){
@@ -245,43 +275,46 @@ void graph_insert_arc(Graph g, int s_vexID, int e_vexID, int weight){
 }
 
 void graph_delete_arc(Graph g, int s_vexID, int e_vexID){
-    if(graph_find_arc(g, s_vexID, e_vexID) == NULL){
-        printf("Arc not found.\n");
-        return;
-    }
     if(g->vex_list[s_vexID].first_arc->next_vexID == e_vexID){
         ArcNode *temp = g->vex_list[s_vexID].first_arc;
         temp->next_arc = temp->next_arc->next_arc;
         free(temp);
         return;
     }
+    ArcNode *target = graph_find_previous_arc(g, s_vexID, e_vexID);
+    if(target == NULL){
+        printf("Arc not found.\n");
+        return;
+    }
     else{
-        ArcNode *target = graph_find_previous_arc(g, s_vexID, e_vexID);
         ArcNode *temp = target->next_arc;
         target->next_arc = temp->next_arc;
         free(temp);
     }
 }
 
-void graph_DFS_traverse(Graph g, _STATUS_ (*visit)(Graph g, int vexID)){
+void graph_DFS_traverse(Graph g, int s_vexID, _STATUS_ (*visit)(Graph g, int vexID)){
     graph_visit_func = visit;
     //Initialize visit array
     for (int i = 0; i < g->vex_num; i++)
         visited[i] = 0;
     //DFS
-    for (int i = 0; i < g->vex_num; i++){
+    int i = s_vexID;
+    for (int n = 0; n < g->vex_num; n++){
         if(!visited[i])
             DFS(g, i);
+        i = i == g->vex_num - 1 ? 0 : i + 1;
     }
 }
 
-void graph_BFS_traverse(Graph g, _STATUS_ (*visit)(Graph g, int vexID)){
+void graph_BFS_traverse(Graph g, int s_vexID, _STATUS_ (*visit)(Graph g, int vexID)){
     //Initialize visit array
     for (int i = 0; i < g->vex_num; i++)
         visited[i] = 0;
     //BFS
     Queue await_vex = queue_init();
-    for (int i = 0; i < g->vex_num; i++){
+    int i = s_vexID;
+    for (int n = 0; n < g->vex_num; n++){
         if(!visited[i]){
             //Set parent vex as visited
             visited[i] = 1;
@@ -300,6 +333,7 @@ void graph_BFS_traverse(Graph g, _STATUS_ (*visit)(Graph g, int vexID)){
                 }
             }
         }
+        i = i == g->vex_num - 1 ? 0 : i + 1;
     }
     free(await_vex);
 }
