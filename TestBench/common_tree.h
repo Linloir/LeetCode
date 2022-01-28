@@ -30,7 +30,7 @@ char* ReadInput(){
             }
         }
     }
-    input[input_length] == '\0';
+    input[input_length] = '\0';
     return input;
 }
 
@@ -130,6 +130,25 @@ void PrintTree(Tree root){
     printf("[");
     InorderPrint(root);
     printf("]\n");
+}
+
+void PrintTraverseResult(int** res, int resSize, int* resColSize){
+    printf("[");
+    for(int i = 0; i < resSize - 1; i++){
+        printf("[");
+        for(int j = 0; j < resColSize[i] - 1; j++){
+            printf("%d,", res[i][j]);
+        }
+        printf("%d],", res[i][resColSize[i] - 1]);
+    }
+    printf("[");
+    for(int j = 0; resSize > 0 && j < resColSize[resSize - 1] - 1; j++){
+        printf("%d,", res[resSize - 1][j]);
+    }
+    if(resSize > 0)
+        printf("%d]]", res[resSize - 1][resColSize[resSize - 1] - 1]);
+    else
+        printf("]]");
 }
 
 #endif
