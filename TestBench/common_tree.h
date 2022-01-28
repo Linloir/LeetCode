@@ -34,6 +34,32 @@ char* ReadInput(){
     return input;
 }
 
+int* GetInputArray(int* inputSize){
+    *inputSize = 0;
+    int* input = (int*)malloc(sizeof(int) * (*inputSize));
+    while(1){
+        char c = getchar();
+        if(c == '[' || c == ' ' || c == '\n'){
+            continue;
+        }
+        else{
+            char buffer[64] = {0};
+            int i = 0;
+            while(c != ',' && c != ']'){
+                buffer[i++] = c;
+                c = getchar();
+            }
+            input = (int*)realloc(input, sizeof(int) * (*inputSize + 1));
+            sscanf(buffer, "%d", &input[(*inputSize)++]);
+            
+        }
+        if(c == ']'){
+            break;
+        }
+    }
+    return input;
+}
+
 Tree GenerateTree(){
     //Read Input
     char* commonInput = ReadInput();
