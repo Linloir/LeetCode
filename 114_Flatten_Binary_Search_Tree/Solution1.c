@@ -16,6 +16,9 @@ struct TreeNode* flattenTraverse(struct TreeNode* root){
 }
 
 void flatten(struct TreeNode* root){
+    if(!root){
+        return;
+    }
     flattenTraverse(root);
 }
 
