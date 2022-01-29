@@ -107,6 +107,9 @@ Tree GenerateTree(){
 }
 
 void InorderPrint(Tree root){
+    if(!root){
+        return;
+    }
     if(!root->left && !root->right){
         printf(" %d ", root->val);
         return;
