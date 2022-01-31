@@ -1,4 +1,4 @@
-//Timeout
+//Passed
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,27 +6,10 @@
 
 struct Element {
     int size;
-    unsigned int binaryAlphMap;
     struct Element* parent;
 };
 
 typedef struct Element* Set;
-
-Set* CreateUnions(char** words, int wordsSize){
-    Set* map = (Set*)malloc(sizeof(Set) * wordsSize);
-    for(int i = 0; i < wordsSize; i++){
-        Set newSet = (Set)malloc(sizeof(struct Element));
-        newSet->parent = NULL;
-        newSet->size = 1;
-        newSet->binaryAlphMap = 0;
-        int l = strlen(words[i]);
-        for(int j = 0; j < l; j++){
-            newSet->binaryAlphMap |= (1 << (words[i][j] - 'a'));
-        }
-        map[i] = newSet;
-    }
-    return map;
-}
 
 Set Find(struct Element* ele){
     struct Element* set = ele;
@@ -40,35 +23,146 @@ void Union(Set a, Set b){
     b->parent = a;
 }
 
-int canUnion(int mapA, int mapB){
-    unsigned int dif = mapA ^ mapB;
-    if(dif == 0){
-        return 1;
+int getKey(char* word){
+    int key = 0;
+    int len = strlen(word);
+    for(int i = 0; i < len; i++){
+        key |= (1 << (word[i] - 'a'));
     }
-    while((dif & 1) == 0){
-        dif >>= 1;
+    return key;
+}
+
+struct MapNode {
+    int key;
+    struct Element* ele;
+    struct MapNode* next;
+};
+
+struct Map {
+    struct MapNode* head;
+    int mapSize;
+    int curSize;
+};
+
+typedef struct Map* HashMap;
+
+HashMap CreateMap(int size){
+    HashMap unorderedMap = (HashMap)malloc(sizeof(struct Map));
+    unorderedMap->mapSize = size ? size : 1;
+    unorderedMap->head = (struct MapNode*)malloc(sizeof(struct MapNode) * unorderedMap->mapSize);
+    for(int i = 0; i < unorderedMap->mapSize; i++){
+        unorderedMap->head[i].next = NULL;
     }
-    dif >>= 1;
-    if(dif == 0){
-        return 1;
+    unorderedMap->curSize = 0;
+    return unorderedMap;
+}
+
+struct MapNode* FindWord(HashMap map, int key){
+    int addr = key % map->mapSize;
+    struct MapNode* ptr = map->head[addr].next;
+    while(ptr){
+        if(ptr->key == key){
+            return ptr;
+        }
+        ptr = ptr->next;
     }
-    return 0;
+    return NULL;
+}
+
+void InsertWord(HashMap map, int key){
+    int addr = key % map->mapSize;
+    struct MapNode* target = FindWord(map, key);
+    if(target){
+        target->ele->size++;
+        return;
+    }
+    else{
+        struct MapNode* newNode = (struct MapNode*)malloc(sizeof(struct MapNode));
+        newNode->key = key;
+        newNode->ele = (struct Element*)malloc(sizeof(struct Element));
+        newNode->ele->parent = NULL;
+        newNode->ele->size = 1;
+        newNode->next = map->head[addr].next;
+        map->head[addr].next = newNode;
+        map->curSize++;
+    }
+}
+
+struct MapNode* GetMapItem(HashMap map){
+    static struct MapNode* item = NULL;
+    static int addr = 0;
+    static int count = 0;
+    if(!item){
+        while(map->head[addr].next == NULL){
+            addr++;
+        }
+        item = map->head[addr].next;
+    }
+    struct MapNode* ret = item;
+    item = item->next;
+    if(!item){
+        addr++;
+        while(addr < map->mapSize && map->head[addr].next == NULL){
+            addr++;
+        }
+        if(addr < map->mapSize)
+            item = map->head[addr].next;
+        else{
+            addr = 0;
+            item = NULL;
+        }
+    }
+    count++;
+    return ret;
 }
 
 int* groupStrings(char** words, int wordsSize, int* returnSize){
-    Set* map = CreateUnions(words, wordsSize);
-    int curMax = 1;
-    int size = wordsSize;
+    HashMap wordMap = CreateMap(wordsSize);
     for(int i = 0; i < wordsSize; i++){
-        for(int j = i + 1; j < wordsSize; j++){
-            Set A = Find(map[i]);
-            Set B = Find(map[j]);
-            if(A != B && canUnion(map[i]->binaryAlphMap, map[j]->binaryAlphMap)){
-                Union(A, B);
-                size--;
-                A->size += B->size;
-                if(A->size > curMax){
-                    curMax = A->size;
+        InsertWord(wordMap, getKey(words[i]));
+    }
+    int curMax = 1;
+    int size = wordMap->curSize;
+    //printf("%d", wordMap->curSize);
+    for(int i = 0; i < wordMap->curSize; i++){
+        struct MapNode* curWord = GetMapItem(wordMap);
+        int curSize = Find(curWord->ele)->size;
+        if(curSize > curMax){
+            curMax = curSize;
+        }
+        for(int j = 0; j < 26; j++){
+            if (curWord->key & (1 << j)){
+                int pairedKey = curWord->key - (1 << j);
+                struct MapNode* paired = FindWord(wordMap, pairedKey);
+                if(paired){
+                    Set a = Find(curWord->ele);
+                    Set b = Find(paired->ele);
+                    if (a != b){
+                        Union(a, b);
+                        --size;
+                        a->size += b->size;
+                        if (a->size > curMax){
+                            curMax = a->size;
+                        }
+                    }
+                }
+                for(int k = 0; k < 26; k++){
+                    if(k != j && ((pairedKey & (1 << k)) == 0)){
+                        int _pairedKey = pairedKey + (1 << k);
+                        paired = FindWord(wordMap, _pairedKey);
+                        if(paired){
+                            Set a = Find(curWord->ele);
+                            Set b = Find(paired->ele);
+                            if(a != b){
+                                Union(a, b);
+                                --size;
+                                a->size += b->size;
+                                if(a->size > curMax){
+                                    curMax = a->size;
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
