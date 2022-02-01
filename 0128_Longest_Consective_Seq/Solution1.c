@@ -70,8 +70,11 @@ HashNode MapFind(HashMap map, int key){
 }
 
 int longestConsecutive(int* nums, int numsSize){
+    if(numsSize == 0){
+        return 0;
+    }
     //Create map
-    HashMap numMap = CreateMap(numsSize * 2);
+    HashMap numMap = CreateMap(numsSize / 2);
     for(int i = 0; i < numsSize; i++){
         Set newSet = (Set)malloc(sizeof(struct set));
         newSet->key = nums[i];
