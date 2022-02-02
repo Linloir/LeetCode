@@ -1,6 +1,9 @@
 //C Solution (1) to Leetcode.134
 //TimeOut
 
+#include <stdio.h>
+#include <stdlib.h>
+
 int canCompleteCircuit(int* gas, int gasSize, int* cost, int costSize){
     int* gross = (int*)malloc(sizeof(int) * gasSize);
     for(int i = 0; i < gasSize; i++){
