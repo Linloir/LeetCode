@@ -1,9 +1,6 @@
-//C Solution (1) to Leetcode.131
-//Description:
-//1. Find all palindromes with center from 0 to num
-//2. Enumerate all possibilities
+//Optimized Solution of solution 1
+//Avoid using realloc!!!
 
-//Timeout
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,17 +15,15 @@ int IsPalindrome(char* s, int strt, int len){
     return 1;
 }
 
-void recursion(char* s, int pos, char**** ans, int* ansSize, int** ansColSize, char*** curAns, int* curAnsSize, int sepLen[][17]){
+void recursion(char* s, int pos, char*** ans, int* ansSize, int* ansColSize, char*** curAns, int* curAnsSize, int sepLen[][17]){
     if(s[pos] == '\0'){
         //Answer
-        *ans = (char***)realloc(*ans, sizeof(char**) * (*ansSize + 1));
-        *ansColSize = (int*)realloc(*ansColSize, sizeof(int) * (*ansSize + 1));
         char** curAnsCpy = (char**)malloc(sizeof(char*) * (*curAnsSize));
         for(int i = 0; i < *curAnsSize; i++){
             curAnsCpy[i] = (*curAns)[i];
         }
-        (*ans)[(*ansSize)] = curAnsCpy;
-        (*ansColSize)[(*ansSize)] = *curAnsSize;
+        ans[(*ansSize)] = curAnsCpy;
+        ansColSize[(*ansSize)] = *curAnsSize;
         (*ansSize)++;
         return;
 
@@ -55,12 +50,13 @@ char*** partition(char* s, int* returnSize, int** returnColumnSizes){
             }
         }
     }
+    int maxSize = 1 << (len - 1);
     *returnSize = 0;
-    char*** ans = (char***)malloc(sizeof(char**) * (*returnSize));
-    *returnColumnSizes = (int*)malloc(sizeof(int) * (*returnSize));
+    char*** ans = (char***)malloc(sizeof(char**) * maxSize);
+    *returnColumnSizes = (int*)malloc(sizeof(int) * maxSize);
     int curAnsSize = 0;
     char** curAns = (char**)malloc(sizeof(char*) * curAnsSize);
-    recursion(s, 0, &ans, returnSize, returnColumnSizes, &curAns, &curAnsSize, sepLen);
+    recursion(s, 0, ans, returnSize, *returnColumnSizes, &curAns, &curAnsSize, sepLen);
     return ans;
 }
 
