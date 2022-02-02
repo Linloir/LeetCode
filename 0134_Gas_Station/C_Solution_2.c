@@ -1,4 +1,4 @@
-//Optimized solution for solution 1
+//C Solution (2) to Leetcode. 134
 #include <stdio.h>
 #include <stdlib.h>
 
