@@ -2,6 +2,8 @@
     "files.associations": {
         "stdlib.h": "c",
         "stdio.h": "c",
-        "common_tree.h": "c"
+        "common_tree.h": "c",
+        "vector": "c",
+        "xstring": "c"
     }
 }
