@@ -62,7 +62,7 @@ List GenerateFromInput(){
 }
 
 List RandomGenerator(int maxSize, int maxVal){
-    srand(time(NULL));
+    //srand(time(NULL));
     int size = rand() % maxSize;
     List head = (List)malloc(sizeof(struct ListNode));
     head->next = NULL;
