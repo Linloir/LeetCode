@@ -35,3 +35,15 @@ int findMinFibonacciNumbers(int k){
     }
     return num;
 }
+
+//TestBench
+void TestBench(){
+    int k;
+    scanf("%d", &k);
+    printf("%d\n", findMinFibonacciNumbers(k));
+}
+
+int main(){
+    TestBench();
+    return 0;
+}
