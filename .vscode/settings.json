@@ -4,6 +4,7 @@
         "stdio.h": "c",
         "common_tree.h": "c",
         "vector": "c",
-        "xstring": "c"
+        "xstring": "c",
+        "cstdlib": "c"
     }
 }
