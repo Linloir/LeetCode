@@ -1,8 +1,8 @@
 /*** 
  * Author       : Linloir
- * Date         : 2022-02-09 14:26:04
- * LastEditTime : 2022-02-09 15:16:19
- * Description  : Leetcode 179 | Medium | C Solution 1
+ * Date         : 2022-02-09 15:15:52
+ * LastEditTime : 2022-02-09 15:18:17
+ * Description  : Leetcode 179 | Medium | Optimized solution for solution 1
  */
 
 #include <stdio.h>
@@ -11,14 +11,15 @@
 #include <stdbool.h>
 
 bool isGreater(const int a, const int b){
-    char a_b[20] = {0};
-    char b_a[20] = {0};
-    sprintf(a_b, "%d%d", a, b);
-    sprintf(b_a, "%d%d", b, a);
-    long long int a_b_num, b_a_num;
-    sscanf(a_b, "%lld", &a_b_num);
-    sscanf(b_a, "%lld", &b_a_num);
-    return a_b_num > b_a_num;
+    long int a_shift = 10;
+    long int b_shift = 10;
+    while(a_shift <= b){
+        a_shift *= 10;
+    }
+    while(b_shift <= a){
+        b_shift *= 10;
+    }
+    return a_shift * a + b > b_shift * b + a;
 }
 
 void MergeSort(int* nums, int* tempArr, int l, int r){
