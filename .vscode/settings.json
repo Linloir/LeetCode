@@ -5,6 +5,7 @@
         "common_tree.h": "c",
         "vector": "c",
         "xstring": "c",
-        "cstdlib": "c"
+        "cstdlib": "c",
+        "queue": "cpp"
     }
 }
